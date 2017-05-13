@@ -1,5 +1,7 @@
 package lt.lunar.platform.logger.url;
 
+import lt.lunar.platform.logger.common.NotFoundException;
+import lt.lunar.platform.logger.common.RecordAlreadyExistsException;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,7 +18,7 @@ class DefaultCrawlURLService implements CrawlURLService {
     @Override
     public CrawlURLDto create(String crawlerId, CrawlURLDto crawlURL) {
         if (crawlURLRepository.findByCrawlerIdAndUrl(crawlerId, crawlURL.getUrl()) != null) {
-            throw new IllegalArgumentException();
+            throw new RecordAlreadyExistsException();
         }
 
         CrawlURL entity = fromDto(crawlURL);
@@ -28,7 +30,7 @@ class DefaultCrawlURLService implements CrawlURLService {
     public CrawlURLDto findOne(Long id) {
         return Optional.ofNullable(crawlURLRepository.findOne(id))
             .map(DefaultCrawlURLService::toDto)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(NotFoundException::new);
     }
 
     private static CrawlURLDto toDto(CrawlURL crawlURL) {
