@@ -1,0 +1,25 @@
+group 'lt.platform.lunar'
+version '1.0-SNAPSHOT'
+
+allprojects {
+    apply plugin: 'idea'
+}
+
+idea {
+    project {
+        jdkName = 1.8
+        languageLevel = 1.8
+        vcs = 'Git'
+    }
+}
+
+def sourceProjects = allprojects.findAll { it.file('src/main').exists() }
+configure(sourceProjects) {
+    apply plugin: 'java'
+
+    sourceCompatibility = 1.8
+
+    repositories {
+        mavenCentral()
+    }
+}
