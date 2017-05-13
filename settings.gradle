@@ -2,3 +2,4 @@ rootProject.name = 'wal-logger'
 
 include ':crawler'
 include ':logger'
+include ':logger-api'
