@@ -7,4 +7,6 @@ public interface CrawlURLService {
     CrawlURLDto findOne(String crawlerId, Long id);
 
     void update(CrawlURLDto crawlUrl);
+
+    boolean exists(String url);
 }

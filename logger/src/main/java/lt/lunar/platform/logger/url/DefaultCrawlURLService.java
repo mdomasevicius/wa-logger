@@ -48,6 +48,11 @@ class DefaultCrawlURLService implements CrawlURLService {
         crawlURLRepository.save(fromDto(crawlUrl));
     }
 
+    @Override
+    public boolean exists(String url) {
+        return crawlURLRepository.existsByUrl(url);
+    }
+
     private static CrawlURLDto toDto(CrawlURL crawlURL) {
         CrawlURLDto dto = new CrawlURLDto();
         dto.setId(crawlURL.getId());

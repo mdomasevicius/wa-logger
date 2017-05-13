@@ -19,19 +19,19 @@ class CrawlURL extends BaseEntity {
     @JoinColumn(name = "category_id")
     private RemoteKey remoteKey;
 
-    String getCrawlerId() {
+    public String getCrawlerId() {
         return crawlerId;
     }
 
-    void setCrawlerId(String crawlerId) {
+    public void setCrawlerId(String crawlerId) {
         this.crawlerId = crawlerId;
     }
 
-    String getUrl() {
+    public String getUrl() {
         return url;
     }
 
-    void setUrl(String url) {
+    public void setUrl(String url) {
         this.url = url;
     }
 
