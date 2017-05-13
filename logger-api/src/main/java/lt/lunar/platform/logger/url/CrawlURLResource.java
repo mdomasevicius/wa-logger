@@ -1,7 +1,10 @@
 package lt.lunar.platform.logger.url;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 public class CrawlURLResource {
 
+    @NotBlank
     private String url;
 
     public String getUrl() {
