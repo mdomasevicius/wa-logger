@@ -8,4 +8,10 @@ dependencies {
     compile 'com.h2database:h2:1.4.195'
 
     compile 'ch.qos.logback:logback-classic:1.2.3'
+dependencyManagement {
+    dependencies {
+        dependencySet(group: 'org.apache.httpcomponents', version: '4.5.3') {
+            entry 'httpclient'
+        }
+    }
 }

@@ -1,8 +1,20 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven { url 'http://repo.spring.io/plugins-release' }
+    }
+    dependencies {
+        classpath 'io.spring.gradle:dependency-management-plugin:0.6.0.RELEASE'
+    }
+}
+
 group 'lt.platform.lunar'
 version '1.0-SNAPSHOT'
 
 allprojects {
     apply plugin: 'idea'
+    apply plugin: 'io.spring.dependency-management'
 }
 
 idea {
