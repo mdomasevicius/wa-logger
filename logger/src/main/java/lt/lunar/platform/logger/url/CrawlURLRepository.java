@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 interface CrawlURLRepository extends CrudRepository<CrawlURL, Long> {
 
     CrawlURL findByCrawlerIdAndUrl(String crawlerId, String url);
+
+    CrawlURL findByCrawlerIdAndId(String crawlerId, Long id);
 }

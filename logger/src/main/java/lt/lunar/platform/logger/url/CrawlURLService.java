@@ -4,5 +4,5 @@ interface CrawlURLService {
 
     CrawlURLDto create(String crawlerId, CrawlURLDto crawlURL);
 
-    CrawlURLDto findOne(Long id);
+    CrawlURLDto findOne(String crawlerId, Long id);
 }

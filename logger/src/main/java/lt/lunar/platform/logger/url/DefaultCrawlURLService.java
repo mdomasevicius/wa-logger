@@ -27,8 +27,8 @@ class DefaultCrawlURLService implements CrawlURLService {
     }
 
     @Override
-    public CrawlURLDto findOne(Long id) {
-        return Optional.ofNullable(crawlURLRepository.findOne(id))
+    public CrawlURLDto findOne(String crawlerId, Long id) {
+        return Optional.ofNullable(crawlURLRepository.findByCrawlerIdAndId(crawlerId, id))
             .map(DefaultCrawlURLService::toDto)
             .orElseThrow(NotFoundException::new);
     }
