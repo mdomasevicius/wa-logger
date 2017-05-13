@@ -1,11 +1,15 @@
 package lt.lunar.platform.logger.celebrities;
 
+import lt.lunar.platform.logger.CollectionResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.*;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static org.springframework.http.ResponseEntity.created;
@@ -24,6 +28,15 @@ class CelebrityRest {
     @GetMapping("/{id}")
     ResponseEntity<CelebrityResource> findOne(@PathVariable Long id) {
         return ok(CelebrityResource.toResource(celebritiesService.findOne(id)));
+    }
+
+    @GetMapping
+    ResponseEntity<CollectionResource<CelebrityResource>> fetchCelebsByUrl(@RequestParam("url") String url) {
+        CollectionResource<CelebrityResource> collection = new CollectionResource<>(celebritiesService.findByUrl(url)
+            .stream()
+            .map(CelebrityResource::toResource)
+            .collect(toList()));
+        return ok(collection);
     }
 
     @PostMapping
