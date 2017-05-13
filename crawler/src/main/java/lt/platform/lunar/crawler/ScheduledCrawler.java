@@ -1,6 +1,7 @@
 package lt.platform.lunar.crawler;
 
 import com.github.javafaker.Faker;
+import lt.lunar.platform.logger.key.RemoteKeyResource;
 import lt.lunar.platform.logger.url.CrawlURLResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,13 +10,17 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestOperations;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 class ScheduledCrawler {
 
     private static final Logger log = LoggerFactory.getLogger(ScheduledCrawler.class);
     private final RestOperations restOperations;
     private final Faker faker = new Faker();
-    private final String crawlerId = faker.superhero().name();
 
     ScheduledCrawler(RestOperations restOperations) {
         this.restOperations = restOperations;
@@ -23,16 +28,81 @@ class ScheduledCrawler {
 
     @Scheduled(initialDelay = 1_000, fixedDelay = 2_000)
     void doCrawl() {
-        String fakeUrl = faker.internet().url();
-        log.info("[" + crawlerId + "] scanning [" + fakeUrl + "]");
+        CrawlURLResource urlResource = tryToRegisterURL(faker.internet().url());
+        sleep();
+
+        /*collectAndLogCelebrities(urlResource.getUrl());
+        sleep();*/ //todo to implement
+
+        registerUrlRemoteKey(urlResource.getId());
+        sleep();
+    }
+
+    private CrawlURLResource tryToRegisterURL(String url) {
+        log.info("Attempting to register: {}", url);
 
         CrawlURLResource crawlURLResource = new CrawlURLResource();
-        crawlURLResource.setUrl(fakeUrl);
-        ResponseEntity<CrawlURLResource> response = restOperations.postForEntity(
+        crawlURLResource.setUrl(url);
+        ResponseEntity<CrawlURLResource> createResponse = restOperations.postForEntity(
             "/api/url",
             crawlURLResource,
             CrawlURLResource.class);
-        log.info("done");
+
+        if (!createResponse.getStatusCode().is2xxSuccessful()) {
+            log.warn("{} already crawled", url);
+        }
+
+        String createdLocation = createResponse.getHeaders()
+            .get("Location")
+            .stream()
+            .findFirst()
+            .orElseThrow(IllegalArgumentException::new);
+
+        ResponseEntity<CrawlURLResource> createdURLResource = restOperations.getForEntity(
+            getResourcePathOrFail(createdLocation),
+            CrawlURLResource.class
+        );
+
+        if (!createdURLResource.getStatusCode().is2xxSuccessful()) {
+            log.error("Failed to retrieve saved url.");
+            throw new IllegalStateException();
+        }
+
+        log.info("{} registered successfully", url);
+        return createdURLResource.getBody();
+    }
+
+    private static String getResourcePathOrFail(String createdLocation) {
+        try {
+            return new URL(createdLocation).getPath();
+        } catch (MalformedURLException e) {
+            log.error("Could not parse created resource location path.", e);
+            throw new IllegalArgumentException();
+        }
+    }
+
+    private void registerUrlRemoteKey(Long urlId) {
+        log.info("Attempting to register remote key for url id {}", urlId);
+        RemoteKeyResource remoteKey = new RemoteKeyResource();
+        remoteKey.setRemoteKey(faker.chuckNorris().fact());
+
+        ResponseEntity<Object> response = restOperations.postForEntity(
+            String.format("/api/url/%d/remote-key", urlId),
+            remoteKey,
+            Object.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info("Remote key for url id {} - registered", urlId);
+        }
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(faker.random().nextInt(2000) + 1000);
+        } catch (InterruptedException e) {
+            log.error("Crash", e);
+        }
     }
 
 }
