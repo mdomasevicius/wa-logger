@@ -1,11 +1,10 @@
 package lt.lunar.platform.logger.common;
 
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-import static javax.persistence.GenerationType.*;
+import static javax.persistence.GenerationType.AUTO;
 
 @MappedSuperclass
 public class BaseEntity {

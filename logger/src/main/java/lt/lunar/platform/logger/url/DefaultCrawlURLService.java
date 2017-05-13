@@ -5,6 +5,7 @@ import lt.lunar.platform.logger.common.RecordAlreadyExistsException;
 import lt.lunar.platform.logger.key.RemoteKey;
 import lt.lunar.platform.logger.key.RemoteKeyDto;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
 import java.util.Optional;
@@ -18,6 +19,7 @@ class DefaultCrawlURLService implements CrawlURLService {
         this.crawlURLRepository = crawlURLRepository;
     }
 
+    @Transactional
     @Override
     public CrawlURLDto create(String crawlerId, CrawlURLDto crawlURL) {
         if (crawlURLRepository.findByCrawlerIdAndUrl(crawlerId, crawlURL.getUrl()) != null) {
@@ -29,6 +31,7 @@ class DefaultCrawlURLService implements CrawlURLService {
         return toDto(crawlURLRepository.save(entity));
     }
 
+    @Transactional(readOnly = true)
     @Override
     public CrawlURLDto findOne(String crawlerId, Long id) {
         return Optional.ofNullable(crawlURLRepository.findByCrawlerIdAndId(crawlerId, id))
@@ -36,6 +39,7 @@ class DefaultCrawlURLService implements CrawlURLService {
             .orElseThrow(NotFoundException::new);
     }
 
+    @Transactional
     @Override
     public void update(CrawlURLDto crawlUrl) {
         Assert.notNull(crawlUrl.getId(), "id must not be null");
