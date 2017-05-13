@@ -28,6 +28,7 @@ class CrawlURLRestSpec extends Specification {
             def getResponse = restClient.get(createdResourcePath(createResponse), ['Crawler-Id': '1'])
         then:
             getResponse.statusCode.is2xxSuccessful()
+            getResponse.body.id
             getResponse.body.url == 'http://test'
     }
 
