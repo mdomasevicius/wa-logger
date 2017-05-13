@@ -1,9 +1,11 @@
 package lt.lunar.platform.logger.url;
 
 import lt.lunar.platform.logger.common.BaseEntity;
+import lt.lunar.platform.logger.key.RemoteKey;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
+
+import static javax.persistence.CascadeType.*;
 
 @Entity
 class CrawlURL extends BaseEntity {
@@ -12,6 +14,10 @@ class CrawlURL extends BaseEntity {
     private String crawlerId;
     @Column(nullable = false)
     private String url;
+
+    @ManyToOne(cascade = ALL)
+    @JoinColumn(name = "category_id")
+    private RemoteKey remoteKey;
 
     String getCrawlerId() {
         return crawlerId;
@@ -27,5 +33,13 @@ class CrawlURL extends BaseEntity {
 
     void setUrl(String url) {
         this.url = url;
+    }
+
+    public RemoteKey getRemoteKey() {
+        return remoteKey;
+    }
+
+    public void setRemoteKey(RemoteKey remoteKey) {
+        this.remoteKey = remoteKey;
     }
 }
