@@ -1,11 +1,14 @@
 package lt.platform.lunar.crawler;
 
 import com.github.javafaker.Faker;
+import lt.platform.lunar.logger.CollectionResource;
 import lt.platform.lunar.logger.celebrities.CelebrityResource;
 import lt.platform.lunar.logger.key.RemoteKeyResource;
 import lt.platform.lunar.logger.url.CrawlURLResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -13,8 +16,8 @@ import org.springframework.web.client.RestOperations;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+
+import static org.springframework.http.HttpMethod.GET;
 
 @Component
 class ScheduledCrawler {
@@ -27,16 +30,56 @@ class ScheduledCrawler {
         this.restOperations = restOperations;
     }
 
-    @Scheduled(initialDelay = 1_000, fixedDelay = 2_000)
+    @Scheduled(initialDelay = 5_000, fixedDelay = 2_000)
     void doCrawl() {
         CrawlURLResource urlResource = tryToRegisterURL(faker.internet().url());
         sleep();
 
-        /*collectAndLogCelebrities(urlResource.getUrl());
-        sleep();*/ //todo to implement
+        collectAndLogCelebrities(urlResource.getId());
+        sleep();
+
+        randomlyInquireForUnfinishedCrawlJobs();
+        sleep();
+
+        randomlyInquireForCelebrities(urlResource);
+        sleep();
 
         registerUrlRemoteKey(urlResource.getId());
         sleep();
+    }
+
+    private void randomlyInquireForCelebrities(CrawlURLResource crawlUrl) {
+        if (faker.random().nextBoolean()) {
+            log.info("Inquiring celebrity list for {}", crawlUrl.getUrl());
+            ResponseEntity<CollectionResource> response = restOperations.getForEntity(
+                String.format("/api/url/%d/celebrities", crawlUrl.getId()),
+                CollectionResource.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                int celebrityCount = response.getBody().getEntries().size();
+                log.info("Celebrity list for url {} retrieved. Size: {}", crawlUrl.getUrl(), celebrityCount);
+            } else {
+                log.error("Failed to inquire celebrity list for url: {}", crawlUrl.getUrl());
+            }
+        }
+    }
+
+    private void randomlyInquireForUnfinishedCrawlJobs() {
+        if (faker.random().nextBoolean()) {
+            log.info("Inquiring for unfinished jobs");
+            ResponseEntity<CollectionResource> response = restOperations.exchange(
+                "/api/url",
+                GET,
+                HttpEntity.EMPTY,
+                new ParameterizedTypeReference<CollectionResource>() {});
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                int unfinishedJobCount = response.getBody().getEntries().size();
+                log.info("There are currently {} unfinished jobs", unfinishedJobCount);
+            } else {
+                log.error("Failed to inquire for unfinished jobs");
+            }
+        }
     }
 
     private CrawlURLResource tryToRegisterURL(String url) {
@@ -82,29 +125,25 @@ class ScheduledCrawler {
         }
     }
 
-    private void collectAndLogCelebrities(String url) {
-        List<CelebrityResource> collectedCelebrities = new ArrayList<>();
-
+    private void collectAndLogCelebrities(Long id) {
         for (int i = 0; i < faker.random().nextInt(10); i++) {
             CelebrityResource celebrity = new CelebrityResource();
-            celebrity.setSourceUrl(url);
             celebrity.setFirstName(faker.name().firstName());
             celebrity.setLastName(faker.name().lastName());
             celebrity.setAddress(faker.address().fullAddress());
-            collectedCelebrities.add(celebrity);
-        }
 
-        log.info("Logging {} celebrities.", collectedCelebrities);
-        ResponseEntity<Object> response = restOperations.postForEntity(
-            "/api/celebrities",
-            collectedCelebrities,
-            Object.class
-        );
+            log.info("Logging celebrity: {} {}", celebrity.getFirstName(), celebrity.getLastName());
+            ResponseEntity<Object> response = restOperations.postForEntity(
+                String.format("/api/url/%d/celebrities", id),
+                celebrity,
+                Object.class
+            );
 
-        if (response.getStatusCode().is2xxSuccessful()) {
-            log.info("Logging complete!");
-        } else {
-            log.warn("Logging failed!");
+            if (response.getStatusCode().is2xxSuccessful()) {
+                log.info("Logging complete!");
+            } else {
+                log.warn("Logging failed!");
+            }
         }
     }
 
