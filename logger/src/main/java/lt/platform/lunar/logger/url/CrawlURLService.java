@@ -8,13 +8,5 @@ public interface CrawlURLService {
 
     CrawlURLDto findOne(Long id);
 
-    CrawlURLDto findOne(String url);
-
-    void update(CrawlURLDto crawlUrl);
-
-    boolean exists(String url);
-
-    boolean exists(Long id);
-
     List<CrawlURLDto> findAll(boolean unfinishedOnly);
 }

@@ -21,12 +21,6 @@ class DefaultCelebritiesService implements CelebrityService {
         this.crawlURLRepository = crawlURLRepository;
     }
 
-    @Transactional(readOnly = true)
-    @Override
-    public CelebrityDto findOne(Long id) {
-        return CelebrityMappers.toDto(celebrityRepository.findOne(id));
-    }
-
     @Transactional
     @Override
     public void create(Long urlId, CelebrityDto celebrity) {

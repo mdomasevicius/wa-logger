@@ -2,7 +2,6 @@ package lt.platform.lunar
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.HttpEntity
 import org.springframework.http.RequestEntity
 import org.springframework.http.ResponseEntity
@@ -26,7 +25,7 @@ class RestClient {
 
     ResponseEntity<Map> get(String url) {
         def entity = new RequestEntity(GET, new URI(url))
-        return restTemplate.exchange(entity, new ParameterizedTypeReference<Map>() {})
+        return restTemplate.exchange(entity, LinkedHashMap)
     }
 
     static String createdResourcePath(ResponseEntity response) {

@@ -7,7 +7,6 @@ import lt.platform.lunar.logger.key.RemoteKey;
 import lt.platform.lunar.logger.key.RemoteKeyDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import java.util.Optional;
@@ -42,31 +41,7 @@ class DefaultCrawlURLService implements CrawlURLService {
             .orElseThrow(NotFoundException::new);
     }
 
-    @Override
-    public CrawlURLDto findOne(String url) {
-        return Optional.ofNullable(crawlURLRepository.findByUrl(url))
-            .map(DefaultCrawlURLService::toDto)
-            .orElseThrow(NotFoundException::new);
-    }
-
-    @Transactional
-    @Override
-    public void update(CrawlURLDto crawlUrl) {
-        Assert.notNull(crawlUrl.getId(), "id must not be null");
-
-        crawlURLRepository.save(fromDto(crawlUrl));
-    }
-
-    @Override
-    public boolean exists(String url) {
-        return crawlURLRepository.existsByUrl(url);
-    }
-
-    @Override
-    public boolean exists(Long id) {
-        return crawlURLRepository.exists(id);
-    }
-
+    @Transactional(readOnly = true)
     @Override
     public List<CrawlURLDto> findAll(boolean unfinishedOnly) {
         if (unfinishedOnly) {
