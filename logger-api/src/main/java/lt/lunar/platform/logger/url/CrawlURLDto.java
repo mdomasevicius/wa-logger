@@ -5,7 +5,6 @@ import lt.lunar.platform.logger.key.RemoteKeyDto;
 public class CrawlURLDto {
 
     private Long id;
-    private String crawlerId;
     private String url;
     private RemoteKeyDto remoteKey;
 
@@ -15,14 +14,6 @@ public class CrawlURLDto {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getCrawlerId() {
-        return crawlerId;
-    }
-
-    public void setCrawlerId(String crawlerId) {
-        this.crawlerId = crawlerId;
     }
 
     public String getUrl() {

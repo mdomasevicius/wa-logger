@@ -2,9 +2,9 @@ package lt.lunar.platform.logger.url;
 
 public interface CrawlURLService {
 
-    CrawlURLDto create(String crawlerId, CrawlURLDto crawlURL);
+    CrawlURLDto create(CrawlURLDto crawlURL);
 
-    CrawlURLDto findOne(String crawlerId, Long id);
+    CrawlURLDto findOne(Long id);
 
     void update(CrawlURLDto crawlUrl);
 

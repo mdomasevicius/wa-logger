@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 interface CrawlURLRepository extends CrudRepository<CrawlURL, Long> {
 
-    CrawlURL findByCrawlerIdAndUrl(String crawlerId, String url);
-
-    CrawlURL findByCrawlerIdAndId(String crawlerId, Long id);
+    CrawlURL findByUrl(String url);
 
     @Query("select count(c) > 0 from CrawlURL c where c.url = :url")
     boolean existsByUrl(@Param("url") String url);

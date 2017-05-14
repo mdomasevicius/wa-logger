@@ -18,22 +18,10 @@ import static java.util.Collections.singletonList;
 @Configuration
 public class Config {
 
-    public static String crawlerId = new Faker().superhero().name();
-
     @Bean
     RestOperations restOperations() {
         return new RestTemplateBuilder()
             .rootUri("http://localhost:8080")
-            .interceptors(singletonList(new CrawlerIdInterceptor()))
             .build();
-    }
-
-    static class CrawlerIdInterceptor implements ClientHttpRequestInterceptor {
-        @Override
-        public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException {
-            HttpHeaders headers = request.getHeaders();
-            headers.add("Crawler-Id", crawlerId);
-            return execution.execute(request, body);
-        }
     }
 }

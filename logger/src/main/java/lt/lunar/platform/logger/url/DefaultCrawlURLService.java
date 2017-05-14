@@ -21,20 +21,18 @@ class DefaultCrawlURLService implements CrawlURLService {
 
     @Transactional
     @Override
-    public CrawlURLDto create(String crawlerId, CrawlURLDto crawlURL) {
-        if (crawlURLRepository.findByCrawlerIdAndUrl(crawlerId, crawlURL.getUrl()) != null) {
+    public CrawlURLDto create(CrawlURLDto crawlURL) {
+        if (crawlURLRepository.findByUrl(crawlURL.getUrl()) != null) {
             throw new RecordAlreadyExistsException();
         }
 
-        CrawlURL entity = fromDto(crawlURL);
-        entity.setCrawlerId(crawlerId);
-        return toDto(crawlURLRepository.save(entity));
+        return toDto(crawlURLRepository.save(fromDto(crawlURL)));
     }
 
     @Transactional(readOnly = true)
     @Override
-    public CrawlURLDto findOne(String crawlerId, Long id) {
-        return Optional.ofNullable(crawlURLRepository.findByCrawlerIdAndId(crawlerId, id))
+    public CrawlURLDto findOne(Long id) {
+        return Optional.ofNullable(crawlURLRepository.findOne(id))
             .map(DefaultCrawlURLService::toDto)
             .orElseThrow(NotFoundException::new);
     }
@@ -43,7 +41,6 @@ class DefaultCrawlURLService implements CrawlURLService {
     @Override
     public void update(CrawlURLDto crawlUrl) {
         Assert.notNull(crawlUrl.getId(), "id must not be null");
-        Assert.notNull(crawlUrl.getCrawlerId(), "crawlerId must not be null");
 
         crawlURLRepository.save(fromDto(crawlUrl));
     }
@@ -56,7 +53,6 @@ class DefaultCrawlURLService implements CrawlURLService {
     private static CrawlURLDto toDto(CrawlURL crawlURL) {
         CrawlURLDto dto = new CrawlURLDto();
         dto.setId(crawlURL.getId());
-        dto.setCrawlerId(crawlURL.getCrawlerId());
         dto.setUrl(crawlURL.getUrl());
 
         RemoteKeyDto remoteKeyDto = Optional.ofNullable(crawlURL.getRemoteKey())
@@ -70,7 +66,6 @@ class DefaultCrawlURLService implements CrawlURLService {
     private static CrawlURL fromDto(CrawlURLDto dto) {
         CrawlURL url = new CrawlURL();
         url.setId(dto.getId());
-        url.setCrawlerId(dto.getCrawlerId());
         url.setUrl(dto.getUrl());
 
         RemoteKey remoteKey = Optional.ofNullable(dto.getRemoteKey())

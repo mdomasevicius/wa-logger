@@ -11,8 +11,8 @@ import spock.lang.Specification
 
 import java.util.concurrent.ThreadLocalRandom
 
-import static java.lang.Long.*
-import static lt.lunar.platform.RestClient.*
+import static java.lang.Long.MAX_VALUE
+import static lt.lunar.platform.RestClient.createdResourcePath
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = [App])
@@ -27,8 +27,7 @@ class RemoteKeySpec extends Specification {
         when:
             def response = restClient.post(
                 "/api/url/$magicUrlId/remote-key",
-                new RemoteKeyResource('test'),
-                ['Crawler-Id': 'ra'])
+                new RemoteKeyResource('test'))
         then:
             response
             response.statusCode.value() == 404
@@ -38,13 +37,11 @@ class RemoteKeySpec extends Specification {
         given:
             def urlCreateResponse = restClient.post(
                 "/api/url",
-                new CrawlURLResource(url: 'http://google.lt'),
-                ['Crawler-Id': 'ra'])
+                new CrawlURLResource(url: 'http://google.lt'))
         when:
             def response = restClient.post(
                 "${createdResourcePath(urlCreateResponse)}/remote-key",
-                new RemoteKeyResource('test'),
-                ['Crawler-Id': 'ra'])
+                new RemoteKeyResource('test'))
         then:
             response
             response.statusCode.value() == 201
@@ -55,15 +52,13 @@ class RemoteKeySpec extends Specification {
         given:
             def urlCreateResponse = restClient.post(
                 "/api/url",
-                new CrawlURLResource(url: 'http://test.lt'),
-                ['Crawler-Id': 'ra'])
+                new CrawlURLResource(url: 'http://test.lt'))
 
             def keyCreateResponse = restClient.post(
                 "${createdResourcePath(urlCreateResponse)}/remote-key",
-                new RemoteKeyResource('test'),
-                ['Crawler-Id': 'ra'])
+                new RemoteKeyResource('test'))
         when:
-            def response = restClient.get(createdResourcePath(keyCreateResponse), ['Crawler-Id': 'ra'])
+            def response = restClient.get(createdResourcePath(keyCreateResponse))
         then:
             response
             response.statusCode.value() == 200

@@ -11,21 +11,11 @@ import static javax.persistence.CascadeType.*;
 class CrawlURL extends BaseEntity {
 
     @Column(nullable = false)
-    private String crawlerId;
-    @Column(nullable = false)
     private String url;
 
     @ManyToOne(cascade = ALL)
     @JoinColumn(name = "category_id")
     private RemoteKey remoteKey;
-
-    public String getCrawlerId() {
-        return crawlerId;
-    }
-
-    public void setCrawlerId(String crawlerId) {
-        this.crawlerId = crawlerId;
-    }
 
     public String getUrl() {
         return url;

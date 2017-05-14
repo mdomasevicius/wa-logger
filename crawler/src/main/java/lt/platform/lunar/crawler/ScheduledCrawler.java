@@ -1,6 +1,7 @@
 package lt.platform.lunar.crawler;
 
 import com.github.javafaker.Faker;
+import lt.lunar.platform.logger.celebrities.CelebrityResource;
 import lt.lunar.platform.logger.key.RemoteKeyResource;
 import lt.lunar.platform.logger.url.CrawlURLResource;
 import org.slf4j.Logger;
@@ -78,6 +79,32 @@ class ScheduledCrawler {
         } catch (MalformedURLException e) {
             log.error("Could not parse created resource location path.", e);
             throw new IllegalArgumentException();
+        }
+    }
+
+    private void collectAndLogCelebrities(String url) {
+        List<CelebrityResource> collectedCelebrities = new ArrayList<>();
+
+        for (int i = 0; i < faker.random().nextInt(10); i++) {
+            CelebrityResource celebrity = new CelebrityResource();
+            celebrity.setSourceUrl(url);
+            celebrity.setFirstName(faker.name().firstName());
+            celebrity.setLastName(faker.name().lastName());
+            celebrity.setAddress(faker.address().fullAddress());
+            collectedCelebrities.add(celebrity);
+        }
+
+        log.info("Logging {} celebrities.", collectedCelebrities);
+        ResponseEntity<Object> response = restOperations.postForEntity(
+            "/api/celebrities",
+            collectedCelebrities,
+            Object.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            log.info("Logging complete!");
+        } else {
+            log.warn("Logging failed!");
         }
     }
 

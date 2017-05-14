@@ -21,21 +21,17 @@ class RemoteKeyRest {
     }
 
     @GetMapping
-    ResponseEntity<RemoteKeyResource> findOne(
-        @PathVariable Long urlId,
-        @RequestHeader("Crawler-Id") String crawlerId
-    ) {
-        return ok(RemoteKeyResource.toResource(remoteKeyService.findOne(crawlerId, urlId)));
+    ResponseEntity<RemoteKeyResource> findOne(@PathVariable Long urlId) {
+        return ok(RemoteKeyResource.toResource(remoteKeyService.findOne(urlId)));
     }
 
     @PostMapping
     ResponseEntity<Void> createKey(
         @PathVariable Long urlId,
-        @RequestHeader("Crawler-Id") String crawlerId,
         @RequestBody @Valid RemoteKeyResource request
     ) {
-        remoteKeyService.createKeyForUrl(crawlerId, urlId, request.getRemoteKey());
-        return created(linkTo(methodOn(RemoteKeyRest.class).findOne(urlId, crawlerId)).toUri()).build();
+        remoteKeyService.createKeyForUrl(urlId, request.getRemoteKey());
+        return created(linkTo(methodOn(RemoteKeyRest.class).findOne(urlId)).toUri()).build();
     }
 
 }

@@ -22,21 +22,15 @@ class CrawlURLRest {
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<CrawlURLResource> findOne(
-        @PathVariable Long id,
-        @RequestHeader("Crawler-Id") String crawlerId
-    ) {
-        CrawlURLResource resource = CrawlURLResource.toResource(crawlURLService.findOne(crawlerId, id));
+    ResponseEntity<CrawlURLResource> findOne(@PathVariable Long id) {
+        CrawlURLResource resource = CrawlURLResource.toResource(crawlURLService.findOne(id));
         return ok(resource);
     }
 
     @PostMapping
-    ResponseEntity create(
-        @RequestBody @Valid CrawlURLResource request,
-        @RequestHeader("Crawler-Id") String crawlerId
-    ) {
-        CrawlURLDto dto = crawlURLService.create(crawlerId, request.toDto());
-        URI uri = linkTo(methodOn(CrawlURLRest.class).findOne(dto.getId(), crawlerId)).toUri();
+    ResponseEntity<Void> create(@RequestBody @Valid CrawlURLResource request) {
+        CrawlURLDto dto = crawlURLService.create(request.toDto());
+        URI uri = linkTo(methodOn(CrawlURLRest.class).findOne(dto.getId())).toUri();
         return created(uri).build();
     }
 

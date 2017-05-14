@@ -10,7 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
-import static lt.lunar.platform.RestClient.*
+import static lt.lunar.platform.RestClient.createdResourcePath
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(classes = App)
@@ -35,7 +35,7 @@ class CelebritySpec extends Specification {
 
     def 'can log celebrity'() {
         given:
-            restClient.post('/api/url', new CrawlURLResource(url: 'http://celeb.gawker.af'), ['Crawler-Id': 'af'])
+            restClient.post('/api/url', new CrawlURLResource(url: 'http://celeb.gawker.af'))
 
         when:
             def createResponse = restClient.post('/api/celebrities', new CelebrityResource(
@@ -62,7 +62,7 @@ class CelebritySpec extends Specification {
 
     def 'can retrieve all celebrities by url'() {
         given:
-            restClient.post('/api/url', new CrawlURLResource(url: 'http://list.of.celebs.de'), ['Crawler-Id': 'af'])
+            restClient.post('/api/url', new CrawlURLResource(url: 'http://list.of.celebs.de'))
             10.times {
                 restClient.post('/api/celebrities', new CelebrityResource(
                     sourceUrl: 'http://list.of.celebs.de',

@@ -8,21 +8,21 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class RemoteKeyService {
+class RemoteKeyService {
 
     private final CrawlURLService crawlURLService;
 
-    public RemoteKeyService(CrawlURLService crawlURLService) {
+    RemoteKeyService(CrawlURLService crawlURLService) {
         this.crawlURLService = crawlURLService;
     }
 
-    RemoteKeyDto findOne(String crawlerId, Long urlId) {
-        return Optional.ofNullable(crawlURLService.findOne(crawlerId, urlId).getRemoteKey())
+    RemoteKeyDto findOne(Long urlId) {
+        return Optional.ofNullable(crawlURLService.findOne(urlId).getRemoteKey())
             .orElseThrow(NotFoundException::new);
     }
 
-    void createKeyForUrl(String crawlerId, Long urlId, String remoteKey) {
-        CrawlURLDto crawlUrl = crawlURLService.findOne(crawlerId, urlId);
+    void createKeyForUrl(Long urlId, String remoteKey) {
+        CrawlURLDto crawlUrl = crawlURLService.findOne(urlId);
         crawlUrl.setRemoteKey(new RemoteKeyDto(remoteKey));
         crawlURLService.update(crawlUrl);
     }
