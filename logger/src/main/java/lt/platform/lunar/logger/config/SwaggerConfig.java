@@ -16,7 +16,7 @@ class SwaggerConfig {
     Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
             .select()
-            .apis(RequestHandlerSelectors.basePackage("lt.lunar.platform"))
+            .apis(RequestHandlerSelectors.basePackage("lt.platform.lunar"))
             .paths(PathSelectors.any())
             .build();
     }
