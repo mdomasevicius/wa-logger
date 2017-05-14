@@ -7,6 +7,7 @@ import lt.platform.lunar.logger.celebrities.CelebrityResource
 import lt.platform.lunar.logger.url.CrawlURLResource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 
@@ -23,8 +24,7 @@ class CelebritySpec extends Specification {
 
     def 'can not log celebrity for unknown url'() {
         when:
-            def response = restClient.post('/api/celebrities', new CelebrityResource(
-                sourceUrl: 'http://unknown',
+            def response = restClient.post('/api/29432/celebrities', new CelebrityResource(
                 firstName: 'na',
                 lastName: 'na',
                 address: 'na'
@@ -35,52 +35,42 @@ class CelebritySpec extends Specification {
 
     def 'can log celebrity'() {
         given:
-            restClient.post('/api/url', new CrawlURLResource(url: 'http://celeb.gawker.af'))
+            def urlCreateResponse = restClient.post('/api/url', new CrawlURLResource(url: 'http://celeb.gawker.af'))
 
         when:
-            def createResponse = restClient.post('/api/celebrities', new CelebrityResource(
-                sourceUrl: 'http://celeb.gawker.af',
-                firstName: 'Bruce',
-                lastName: 'Willis',
-                address: 'Hollywod St. 100'
-            ))
+            def createResponse = restClient.post(
+                "${createdResourcePath(urlCreateResponse)}/celebrities",
+                new CelebrityResource(
+                    firstName: 'Bruce',
+                    lastName: 'Willis',
+                    address: 'Hollywod St. 100'
+                ))
         then:
-            createResponse.statusCode.value() == 201
-            createResponse.headers.Location
+            createResponse.statusCode.value() == 200
 
         when:
-            def celebrityResponse = restClient.get(createdResourcePath(createResponse))
+            def celebrityResponse = restClient.get("${createdResourcePath(urlCreateResponse)}/celebrities")
         then:
             celebrityResponse.statusCode.value() == 200
-            with(celebrityResponse.body) {
-                it.sourceUrl == 'http://celeb.gawker.af'
-                it.firstName == 'Bruce'
-                it.lastName == 'Willis'
-                it.address == 'Hollywod St. 100'
+            celebrityResponse.body.entries.find {
+                it.firstName == 'Bruce' && it.lastName == 'Willis' && it.address == 'Hollywod St. 100'
             }
     }
 
     def 'can retrieve all celebrities by url'() {
         given:
-            restClient.post('/api/url', new CrawlURLResource(url: 'http://list.of.celebs.de'))
+            def urlCreateResponse = restClient.post('/api/url', new CrawlURLResource(url: 'http://list.of.celebs.de'))
             10.times {
-                restClient.post('/api/celebrities', new CelebrityResource(
-                    sourceUrl: 'http://list.of.celebs.de',
+                restClient.post("${createdResourcePath(urlCreateResponse)}/celebrities", new CelebrityResource(
                     firstName: faker.name().firstName(),
                     lastName: faker.name().lastName(),
                     address: faker.address().fullAddress()
                 ))
             }
         when:
-            def response = restClient.get("/api/celebrities?url=http://list.of.celebs.de")
+            def response = restClient.get("${createdResourcePath(urlCreateResponse)}/celebrities")
         then:
             response.statusCode.value() == 200
             response.body.entries.size() == 10
-            with(response.body.entries[4]) {
-                it.sourceUrl
-                it.firstName
-                it.lastName
-                it.address
-            }
     }
 }

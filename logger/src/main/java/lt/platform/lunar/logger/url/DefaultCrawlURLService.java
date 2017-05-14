@@ -1,5 +1,6 @@
 package lt.platform.lunar.logger.url;
 
+import lt.platform.lunar.logger.celebrities.CelebrityMappers;
 import lt.platform.lunar.logger.common.NotFoundException;
 import lt.platform.lunar.logger.common.RecordAlreadyExistsException;
 import lt.platform.lunar.logger.key.RemoteKey;
@@ -8,7 +9,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
+
+import static java.util.stream.Collectors.toList;
 
 @Service
 class DefaultCrawlURLService implements CrawlURLService {
@@ -37,6 +42,13 @@ class DefaultCrawlURLService implements CrawlURLService {
             .orElseThrow(NotFoundException::new);
     }
 
+    @Override
+    public CrawlURLDto findOne(String url) {
+        return Optional.ofNullable(crawlURLRepository.findByUrl(url))
+            .map(DefaultCrawlURLService::toDto)
+            .orElseThrow(NotFoundException::new);
+    }
+
     @Transactional
     @Override
     public void update(CrawlURLDto crawlUrl) {
@@ -50,6 +62,26 @@ class DefaultCrawlURLService implements CrawlURLService {
         return crawlURLRepository.existsByUrl(url);
     }
 
+    @Override
+    public boolean exists(Long id) {
+        return crawlURLRepository.exists(id);
+    }
+
+    @Override
+    public List<CrawlURLDto> findAll(boolean unfinishedOnly) {
+        if (unfinishedOnly) {
+            return crawlURLRepository.findAllUnfinished()
+                .stream()
+                .map(DefaultCrawlURLService::toDto)
+                .collect(toList());
+        } else  {
+            Iterable<CrawlURL> allUrls = crawlURLRepository.findAll();
+            return StreamSupport.stream(allUrls.spliterator(), false)
+                .map(DefaultCrawlURLService::toDto)
+                .collect(toList());
+        }
+    }
+
     private static CrawlURLDto toDto(CrawlURL crawlURL) {
         CrawlURLDto dto = new CrawlURLDto();
         dto.setId(crawlURL.getId());
@@ -59,6 +91,8 @@ class DefaultCrawlURLService implements CrawlURLService {
             .map(k -> new RemoteKeyDto(k.getKey()))
             .orElse(null);
         dto.setRemoteKey(remoteKeyDto);
+
+        crawlURL.getCelebrities().forEach(c -> dto.addCelebrity(CelebrityMappers.toDto(c)));
 
         return dto;
     }
@@ -75,6 +109,8 @@ class DefaultCrawlURLService implements CrawlURLService {
                 return rk;
             }).orElse(null);
         url.setRemoteKey(remoteKey);
+
+        dto.getCelebrities().forEach(c -> url.addCelebrity(CelebrityMappers.fromDto(c)));
 
         return url;
     }
