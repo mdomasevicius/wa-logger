@@ -1,9 +1,9 @@
 package lt.platform.lunar.crawler;
 
 import com.github.javafaker.Faker;
-import lt.lunar.platform.logger.celebrities.CelebrityResource;
-import lt.lunar.platform.logger.key.RemoteKeyResource;
-import lt.lunar.platform.logger.url.CrawlURLResource;
+import lt.platform.lunar.logger.celebrities.CelebrityResource;
+import lt.platform.lunar.logger.key.RemoteKeyResource;
+import lt.platform.lunar.logger.url.CrawlURLResource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
