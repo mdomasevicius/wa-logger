@@ -18,8 +18,12 @@
 | `./docker-compose scale crawler=5` | Scale **crawler** containers to 5    |
 
 ## Not Implemented
+
 * Security
 * Hypermedia
 * Paging
 * Proper infrastructure (separation of concerns, modularization etc...)
-* More complex test cases
+* More complex test cases (and dedicated test suite for REST API)
+* More refined configuration of frame-works in use
+* Use of key value store for better performance
+* More refined docker/docker-compose configuration

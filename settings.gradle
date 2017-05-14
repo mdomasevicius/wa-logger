@@ -1,4 +1,4 @@
-rootProject.name = 'wal-logger'
+rootProject.name = 'wa-logger'
 
 include ':crawler'
 include ':logger'
