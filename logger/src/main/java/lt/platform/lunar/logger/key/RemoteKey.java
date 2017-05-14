@@ -9,6 +9,12 @@ public class RemoteKey extends BaseEntity {
 
     private String key;
 
+    public RemoteKey() {}
+
+    public RemoteKey(String key) {
+        this.key = key;
+    }
+
     public String getKey() {
         return key;
     }
