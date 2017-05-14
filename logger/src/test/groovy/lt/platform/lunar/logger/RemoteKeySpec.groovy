@@ -15,7 +15,7 @@ import static java.lang.Long.MAX_VALUE
 import static lt.platform.lunar.RestClient.createdResourcePath
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = [App])
+@ContextConfiguration(classes = App)
 class RemoteKeySpec extends Specification {
 
     @Autowired

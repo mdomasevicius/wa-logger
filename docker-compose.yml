@@ -1,0 +1,12 @@
+version: '3'
+services:
+    logger:
+        build: ./logger
+        ports:
+            - '8080:8080'
+    crawler:
+        build: ./crawler
+        links:
+            - logger
+        environment:
+            LOGGER_URL: http://logger:8080

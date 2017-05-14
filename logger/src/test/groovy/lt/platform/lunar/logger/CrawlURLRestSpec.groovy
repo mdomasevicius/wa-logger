@@ -11,7 +11,7 @@ import spock.lang.Specification
 import static lt.platform.lunar.RestClient.createdResourcePath
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ContextConfiguration(classes = [App])
+@ContextConfiguration(classes = App)
 class CrawlURLRestSpec extends Specification {
 
     @Autowired

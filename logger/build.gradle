@@ -1,4 +1,5 @@
 apply plugin: 'groovy'
+apply plugin: 'org.springframework.boot'
 
 dependencies {
     compile project(':logger-api')
