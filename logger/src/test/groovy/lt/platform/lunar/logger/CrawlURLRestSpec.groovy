@@ -34,21 +34,7 @@ class CrawlURLRestSpec extends Specification {
             getResponse.body.url == 'http://test'
     }
 
-    def 'crawler id is required'() {
-        when:
-            def response = restClient.post('/api/url', new CrawlURLResource())
-        then:
-            response.statusCode.is4xxClientError()
-    }
-
     def 'crawler url is required'() {
-        when:
-            def response = restClient.post('/api/url', new CrawlURLResource())
-        then:
-            response.statusCode.is4xxClientError()
-    }
-
-    def 'url is required'() {
         when:
             def response = restClient.post('/api/url', new CrawlURLResource())
         then:
