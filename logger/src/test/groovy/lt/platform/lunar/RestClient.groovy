@@ -15,8 +15,8 @@ class RestClient {
     @Autowired
     TestRestTemplate restTemplate
 
-    ResponseEntity post(String url, Object body) {
-        return restTemplate.postForEntity(url, new HttpEntity(body), Object)
+    ResponseEntity<Map> post(String url, Object body) {
+        return restTemplate.postForEntity(url, new HttpEntity(body), LinkedHashMap)
     }
 
     ResponseEntity<Map> get(String url) {
