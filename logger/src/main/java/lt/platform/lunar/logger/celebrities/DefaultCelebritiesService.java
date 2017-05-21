@@ -16,7 +16,7 @@ class DefaultCelebritiesService implements CelebrityService {
     private final CelebrityRepository celebrityRepository;
     private final CrawlURLRepository crawlURLRepository;
 
-    public DefaultCelebritiesService(CelebrityRepository celebrityRepository, CrawlURLRepository crawlURLRepository) {
+    DefaultCelebritiesService(CelebrityRepository celebrityRepository, CrawlURLRepository crawlURLRepository) {
         this.celebrityRepository = celebrityRepository;
         this.crawlURLRepository = crawlURLRepository;
     }
