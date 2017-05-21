@@ -59,7 +59,7 @@ class ScheduledCrawler {
                 int celebrityCount = response.getBody().getEntries().size();
                 log.info("Celebrity list for url {} retrieved. Size: {}", crawlUrl.getUrl(), celebrityCount);
             } else {
-                log.error("Failed to inquire celebrity list for url: {}", crawlUrl.getUrl());
+                log.warn("Failed to inquire celebrity list for url: {}", crawlUrl.getUrl());
             }
         }
     }
@@ -77,7 +77,7 @@ class ScheduledCrawler {
                 int unfinishedJobCount = response.getBody().getEntries().size();
                 log.info("There are currently {} unfinished jobs", unfinishedJobCount);
             } else {
-                log.error("Failed to inquire for unfinished jobs");
+                log.warn("Failed to inquire for unfinished jobs");
             }
         }
     }
@@ -108,7 +108,7 @@ class ScheduledCrawler {
         );
 
         if (!createdURLResource.getStatusCode().is2xxSuccessful()) {
-            log.error("Failed to retrieve saved url.");
+            log.warn("Failed to retrieve saved url.");
             throw new IllegalStateException();
         }
 
@@ -160,6 +160,8 @@ class ScheduledCrawler {
 
         if (response.getStatusCode().is2xxSuccessful()) {
             log.info("Remote key for url id {} - registered", urlId);
+        } else {
+            log.warn("Failed to register remote key for urlId - {}", urlId);
         }
     }
 
