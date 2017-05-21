@@ -7,18 +7,9 @@ import javax.persistence.Entity;
 @Entity
 public class Celebrity extends BaseEntity {
 
-    private String sourceUrl;
     private String firstName;
     private String lastName;
     private String address;
-
-    public String getSourceUrl() {
-        return sourceUrl;
-    }
-
-    public void setSourceUrl(String sourceUrl) {
-        this.sourceUrl = sourceUrl;
-    }
 
     public String getFirstName() {
         return firstName;
