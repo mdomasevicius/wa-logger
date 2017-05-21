@@ -7,7 +7,6 @@ import lt.platform.lunar.logger.celebrities.CelebrityResource
 import lt.platform.lunar.logger.url.CrawlURLResource
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.ResponseEntity
 import org.springframework.test.context.ContextConfiguration
 import spock.lang.Specification
 

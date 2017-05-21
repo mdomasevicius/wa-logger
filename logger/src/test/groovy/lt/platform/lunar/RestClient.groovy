@@ -15,12 +15,8 @@ class RestClient {
     @Autowired
     TestRestTemplate restTemplate
 
-    def <T> ResponseEntity<T> post(String url, Object body) {
+    ResponseEntity post(String url, Object body) {
         return restTemplate.postForEntity(url, new HttpEntity(body), Object)
-    }
-
-     def <T> ResponseEntity<T> post(String url, Object request, Class<T> responseType) {
-        return restTemplate.postForEntity(url, request, responseType)
     }
 
     ResponseEntity<Map> get(String url) {
